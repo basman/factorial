@@ -3,16 +3,24 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/big"
 	"os"
 	"strconv"
+	"time"
 )
 
-func Factorial(n uint64) (result uint64) {
-	if n > 0 {
-		result = n * Factorial(n-1)
-		return result
+var zero = big.NewInt(0)
+var one = big.NewInt(1)
+
+func Factorial(n *big.Int) *big.Int {
+	if n.Cmp(zero) == 0 {
+		return one
 	}
-	return 1
+
+	var result = big.NewInt(0)
+	var dec = big.NewInt(0)
+
+	return result.Mul(n, Factorial(dec.Sub(n, one)))
 }
 
 func main() {
@@ -25,7 +33,13 @@ func main() {
 		log.Fatalf("invalid number '%v'\n", os.Args[1])
 	}
 
-	f := Factorial(uint64(n))
+	start := time.Now()
 
-	fmt.Printf("%v! = %v\n", n, f)
+	// compute factorial
+	f := Factorial(big.NewInt(int64(n)))
+
+	fmt.Printf("%v! uses %v bits for storage (%v bytes)\n", n, f.BitLen(), len(f.Bytes()))
+	fmt.Printf("computation took %v µs\n", time.Now().Sub(start).Microseconds())
+
+	fmt.Printf("\n%v! = %v\n", n, f)
 }
