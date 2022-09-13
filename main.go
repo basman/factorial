@@ -3,24 +3,17 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/big"
 	"os"
 	"strconv"
 	"time"
 )
 
-var zero = big.NewInt(0)
-var one = big.NewInt(1)
-
-func Factorial(n *big.Int) *big.Int {
-	if n.Cmp(zero) == 0 {
-		return one
+func Factorial(n uint64) uint64 {
+	if n <= 1 {
+		return 1
 	}
 
-	var result = big.NewInt(0)
-	var dec = big.NewInt(0)
-
-	return result.Mul(n, Factorial(dec.Sub(n, one)))
+	return n * Factorial(n-1)
 }
 
 func main() {
@@ -36,10 +29,9 @@ func main() {
 	start := time.Now()
 
 	// compute factorial
-	f := Factorial(big.NewInt(int64(n)))
+	f := Factorial(uint64(n))
 
-	fmt.Printf("%v! uses %v bits for storage (%v bytes)\n", n, f.BitLen(), len(f.Bytes()))
-	fmt.Printf("computation took %v µs\n", time.Now().Sub(start).Microseconds())
+	fmt.Printf("computation took %v ns\n", time.Now().Sub(start).Nanoseconds())
 
 	fmt.Printf("\n%v! = %v\n", n, f)
 }
